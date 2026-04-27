@@ -1,0 +1,92 @@
+[
+  {
+    "id": "c1",
+    "numero": "101",
+    "etage": 1,
+    "type": "simple",
+    "prix": 25000,
+    "statut": "occupee",
+    "capacite": 1
+  },
+  {
+    "id": "c2",
+    "numero": "102",
+    "etage": 1,
+    "type": "simple",
+    "prix": 25000,
+    "statut": "libre",
+    "capacite": 1
+  },
+  {
+    "id": "c3",
+    "numero": "103",
+    "etage": 1,
+    "type": "double",
+    "prix": 40000,
+    "statut": "libre",
+    "capacite": 2
+  },
+  {
+    "id": "c4",
+    "numero": "104",
+    "etage": 1,
+    "type": "double",
+    "prix": 40000,
+    "statut": "libre",
+    "capacite": 2
+  },
+  {
+    "id": "c5",
+    "numero": "105",
+    "etage": 1,
+    "type": "suite",
+    "prix": 75000,
+    "statut": "libre",
+    "capacite": 4
+  },
+  {
+    "id": "c6",
+    "numero": "201",
+    "etage": 2,
+    "type": "simple",
+    "prix": 25000,
+    "statut": "libre",
+    "capacite": 1
+  },
+  {
+    "id": "c7",
+    "numero": "202",
+    "etage": 2,
+    "type": "simple",
+    "prix": 25000,
+    "statut": "libre",
+    "capacite": 1
+  },
+  {
+    "id": "c8",
+    "numero": "203",
+    "etage": 2,
+    "type": "double",
+    "prix": 40000,
+    "statut": "libre",
+    "capacite": 2
+  },
+  {
+    "id": "c9",
+    "numero": "204",
+    "etage": 2,
+    "type": "double",
+    "prix": 40000,
+    "statut": "libre",
+    "capacite": 2
+  },
+  {
+    "id": "c10",
+    "numero": "205",
+    "etage": 2,
+    "type": "suite",
+    "prix": 75000,
+    "statut": "libre",
+    "capacite": 4
+  }
+]

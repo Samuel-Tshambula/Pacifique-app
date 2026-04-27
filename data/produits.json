@@ -1,0 +1,134 @@
+[
+  {
+    "id": "p1",
+    "code": "BRG01",
+    "nom": "Burger Classic",
+    "prix": 8500,
+    "categorie": "Burgers",
+    "stock": 50,
+    "stockMin": 10,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p2",
+    "code": "BRG02",
+    "nom": "Burger Fromage",
+    "prix": 9500,
+    "categorie": "Burgers",
+    "stock": 40,
+    "stockMin": 10,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p3",
+    "code": "BRG03",
+    "nom": "Burger Poulet",
+    "prix": 9000,
+    "categorie": "Burgers",
+    "stock": 0,
+    "stockMin": 10,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p4",
+    "code": "PIZ01",
+    "nom": "Pizza Margherita",
+    "prix": 12000,
+    "categorie": "Pizzas",
+    "stock": 30,
+    "stockMin": 5,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p5",
+    "code": "PIZ02",
+    "nom": "Pizza Poulet",
+    "prix": 14000,
+    "categorie": "Pizzas",
+    "stock": 25,
+    "stockMin": 5,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p6",
+    "code": "PIZ03",
+    "nom": "Pizza 4 Fromages",
+    "prix": 15000,
+    "categorie": "Pizzas",
+    "stock": 8,
+    "stockMin": 5,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p7",
+    "code": "BOI01",
+    "nom": "Coca-Cola",
+    "prix": 1500,
+    "categorie": "Boissons",
+    "stock": 100,
+    "stockMin": 20,
+    "unite": "bouteille",
+    "actif": true
+  },
+  {
+    "id": "p8",
+    "code": "BOI02",
+    "nom": "Eau Minérale",
+    "prix": 1000,
+    "categorie": "Boissons",
+    "stock": 150,
+    "stockMin": 30,
+    "unite": "bouteille",
+    "actif": true
+  },
+  {
+    "id": "p9",
+    "code": "BOI03",
+    "nom": "Jus d'Orange",
+    "prix": 2000,
+    "categorie": "Boissons",
+    "stock": 60,
+    "stockMin": 15,
+    "unite": "verre",
+    "actif": true
+  },
+  {
+    "id": "p10",
+    "code": "BOI04",
+    "nom": "Bière Primus",
+    "prix": 2500,
+    "categorie": "Boissons",
+    "stock": 80,
+    "stockMin": 20,
+    "unite": "bouteille",
+    "actif": true
+  },
+  {
+    "id": "p11",
+    "code": "PLA01",
+    "nom": "Poulet Rôti",
+    "prix": 11000,
+    "categorie": "Plats",
+    "stock": 20,
+    "stockMin": 5,
+    "unite": "pièce",
+    "actif": true
+  },
+  {
+    "id": "p12",
+    "code": "PLA02",
+    "nom": "Poisson Grillé",
+    "prix": 13000,
+    "categorie": "Plats",
+    "stock": 15,
+    "stockMin": 5,
+    "unite": "pièce",
+    "actif": true
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "Administrateur",
+    "username": "admin",
+    "password": "$2b$12$wD6OsVIt86VTBWAbCyglt..xEr.1bVk4ciOwLR.w1J3fAEoziKeQO",
+    "role": "admin",
+    "isActive": true,
+    "failedAttempts": 0,
+    "lockedUntil": null,
+    "lastLogin": "2026-04-27T12:50:39.628Z",
+    "createdAt": "2026-04-26T20:18:59.367Z"
+  },
+  {
+    "id": "888102e6-51fa-42c0-ae3a-92bff4e79ce0",
+    "name": "Marceline Gilbert",
+    "username": "Marceline.Gilbert",
+    "password": "$2b$12$4HVrigm60hxvxpQN.a2B2u49t8RqQHkL7aMSXXiO31H1wzhpYj6Uu",
+    "role": "serveur",
+    "isActive": true,
+    "failedAttempts": 0,
+    "lockedUntil": null,
+    "lastLogin": "2026-04-27T12:33:02.529Z",
+    "createdAt": "2026-04-26T20:19:39.677Z"
+  },
+  {
+    "id": "cfb7d333-811f-422a-9500-6551a181f371",
+    "name": "Glodie Shica",
+    "username": "Glodie.Shica",
+    "password": "$2b$12$iqYGnfFcFh.sApyqwPnLFOxua7tWgLp2d7JkOoJVbcI.9YHzGx7rK",
+    "role": "cuisinier",
+    "isActive": true,
+    "failedAttempts": 0,
+    "lockedUntil": null,
+    "lastLogin": "2026-04-27T12:32:40.163Z",
+    "createdAt": "2026-04-26T20:22:54.480Z"
+  },
+  {
+    "id": "05449dc7-0f6f-4785-bc33-f1cc899d1147",
+    "name": "Pailjoie Kazumba",
+    "username": "Pailjoie.Kazumba",
+    "password": "$2b$12$nLAScjWYTL.bQkg.KLM4geMhSS9uK8Zn4Ittgj.Skw0G7UIsrxOXm",
+    "role": "receptionniste",
+    "isActive": true,
+    "failedAttempts": 0,
+    "lockedUntil": null,
+    "lastLogin": "2026-04-27T12:33:24.709Z",
+    "createdAt": "2026-04-26T20:25:34.259Z"
+  }
+]

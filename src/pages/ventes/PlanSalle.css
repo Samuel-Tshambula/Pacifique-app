@@ -1,0 +1,97 @@
+.plan-salle {
+  padding: 0;
+}
+
+.plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.plan-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.legende {
+  display: flex;
+  gap: 20px;
+}
+
+.legende-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.legende-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.zone-section {
+  margin-bottom: 32px;
+}
+
+.zone-titre {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tables-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.table-tile {
+  width: 140px;
+  height: 110px;
+  border: 2px solid;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  font-family: 'Roboto', sans-serif;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.table-tile.clickable {
+  cursor: pointer;
+}
+
+.table-tile.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.table-tile.non-clickable {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.table-numero {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.table-capacite {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.table-statut {
+  font-size: 12px;
+  font-weight: 600;
+}

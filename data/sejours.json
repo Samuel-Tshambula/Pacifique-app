@@ -1,0 +1,21 @@
+[
+  {
+    "id": "3815e9f3-d40a-4b71-a62d-8b65ec8901ca",
+    "chambreId": "c1",
+    "chambreNumero": "101",
+    "clientNom": "Kalala",
+    "clientPrenom": "Roland",
+    "clientPiece": "31024598",
+    "nombrePersonnes": 1,
+    "dateArrivee": "2026-04-27T12:34:22.667Z",
+    "dateDepart": null,
+    "nuits": 4,
+    "prixNuit": 25000,
+    "consommations": [],
+    "statut": "en_cours",
+    "modePaiement": null,
+    "totalHebergement": 100000,
+    "totalConsommations": 0,
+    "createdAt": "2026-04-27T12:34:22.667Z"
+  }
+]
