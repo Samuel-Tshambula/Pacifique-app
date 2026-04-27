@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import { startPeriodicSync } from './models/sync.js'
+import { startPeriodicSync } from './models/sync'
 import authRoutes from './routes/auth.js'
 import tablesRoutes from './routes/tables.js'
 import produitsRoutes from './routes/produits.js'
@@ -54,7 +54,7 @@ app.post('/api/sync', async (_req, res) => {
     return res.status(503).json({ message: 'MongoDB non connecté' })
   }
   try {
-    const { syncToCloud, syncFromCloud } = await import('./models/sync.js')
+    const { syncToCloud, syncFromCloud } = await import('./models/sync')
     const toCloud = await syncToCloud()
     const fromCloud = await syncFromCloud()
     res.json({ toCloud, fromCloud, message: 'Synchronisation terminée' })

@@ -45,7 +45,7 @@ router.post('/', (req: Request, res: Response) => {
     tableId,
     tableNumero,
     type: type || 'sur_place',
-    statut: 'en_cours',
+    statut: 'en_cours' as const,
     lignes: lignes.map((l: { produitId: string; produitNom: string; quantite: number; prix: number; notes: string }) => ({
       id: uuid(),
       ...l,

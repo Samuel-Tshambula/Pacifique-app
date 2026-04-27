@@ -121,7 +121,7 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-              <Tooltip formatter={(v: number) => [`${v.toLocaleString()} FC`, 'Ventes']} />
+              <Tooltip formatter={(value: any) => [`${Number(value).toLocaleString()} FC`, 'Ventes']} />
               <Area type="monotone" dataKey="ventes" stroke="#2563eb" strokeWidth={2} fill="url(#colorVentes)" />
             </AreaChart>
           </ResponsiveContainer>
@@ -134,7 +134,7 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
               <XAxis dataKey="heure" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-              <Tooltip formatter={(v: number) => [`${v.toLocaleString()} FC`, 'Ventes']} />
+              <Tooltip formatter={(value: any) => [`${Number(value).toLocaleString()} FC`, 'Ventes']} />
               <Bar dataKey="ventes" fill="#22c55e" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>

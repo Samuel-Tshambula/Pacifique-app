@@ -63,13 +63,21 @@ const TableSchema = new mongoose.Schema({
 const SejourSchema = new mongoose.Schema({
   id: String,
   chambreId: String,
+  chambreNumero: String,
   clientNom: String,
+  clientPrenom: String,
   clientEmail: String,
+  clientPiece: String,
+  nombrePersonnes: Number,
   dateArrivee: String,
   dateDepart: String,
-  nombrePersonnes: Number,
+  nuits: Number,
+  tarifNuit: Number,
+  consommations: Array,
   statut: String,
+  modePaiement: String,
   totalHebergement: Number,
+  totalConsommations: Number,
   createdAt: String,
   updatedAt: String,
   syncedAt: { type: String, default: () => new Date().toISOString() }
@@ -135,8 +143,19 @@ export async function syncFromCloud() {
 
     for (const cloudUser of cloudUsers) {
       const existing = mergedUsers.find(u => u.id === cloudUser.id)
-      if (!existing || new Date(cloudUser.updatedAt) > new Date(existing.lastLogin || '1970-01-01')) {
-        mergedUsers.push(cloudUser.toObject())
+      if (!existing || new Date((cloudUser.updatedAt || cloudUser.createdAt)!).getTime() > new Date(existing.lastLogin || '1970-01-01').getTime()) {
+        mergedUsers.push({
+          id: cloudUser.id!,
+          name: cloudUser.name!,
+          username: cloudUser.username!,
+          password: cloudUser.password!,
+          role: cloudUser.role! as any,
+          isActive: cloudUser.isActive!,
+          failedAttempts: cloudUser.failedAttempts!,
+          lockedUntil: cloudUser.lockedUntil || null,
+          lastLogin: cloudUser.lastLogin || null,
+          createdAt: cloudUser.createdAt!
+        } as any)
       }
     }
     saveUsers(mergedUsers.filter((u, i, arr) => arr.findIndex(x => x.id === u.id) === i))
@@ -148,8 +167,23 @@ export async function syncFromCloud() {
 
     for (const cloudCommande of cloudCommandes) {
       const existing = mergedCommandes.find(c => c.id === cloudCommande.id)
-      if (!existing || new Date(cloudCommande.updatedAt) > new Date(existing.updatedAt)) {
-        mergedCommandes.push(cloudCommande.toObject())
+      if (!existing || new Date(cloudCommande.updatedAt!).getTime() > new Date(existing.updatedAt).getTime()) {
+        mergedCommandes.push({
+          id: cloudCommande.id!,
+          numero: cloudCommande.numero!,
+          serveurId: cloudCommande.serveurId!,
+          serveurNom: cloudCommande.serveurNom!,
+          tableId: cloudCommande.tableId!,
+          tableNumero: cloudCommande.tableNumero!,
+          type: cloudCommande.type! as any,
+          statut: cloudCommande.statut! as any,
+          lignes: cloudCommande.lignes,
+          total: cloudCommande.total!,
+          notes: cloudCommande.notes!,
+          createdAt: cloudCommande.createdAt!,
+          updatedAt: cloudCommande.updatedAt!,
+          modePaiement: cloudCommande.modePaiement || null
+        })
       }
     }
     saveCommandes(mergedCommandes.filter((c, i, arr) => arr.findIndex(x => x.id === c.id) === i))
@@ -162,7 +196,17 @@ export async function syncFromCloud() {
     for (const cloudProduit of cloudProduits) {
       const existing = mergedProduits.find(p => p.id === cloudProduit.id)
       if (!existing) {
-        mergedProduits.push(cloudProduit.toObject())
+        mergedProduits.push({
+          id: cloudProduit.id!,
+          code: cloudProduit.code!,
+          nom: cloudProduit.nom!,
+          prix: cloudProduit.prix!,
+          categorie: cloudProduit.categorie!,
+          stock: cloudProduit.stock!,
+          stockMin: cloudProduit.stockMin!,
+          unite: cloudProduit.unite!,
+          actif: cloudProduit.actif!
+        })
       }
     }
     saveProduits(mergedProduits.filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i))
@@ -175,7 +219,13 @@ export async function syncFromCloud() {
     for (const cloudTable of cloudTables) {
       const existing = mergedTables.find(t => t.id === cloudTable.id)
       if (!existing) {
-        mergedTables.push(cloudTable.toObject())
+        mergedTables.push({
+          id: cloudTable.id!,
+          numero: cloudTable.numero!,
+          zone: cloudTable.zone! as any,
+          capacite: cloudTable.capacite!,
+          statut: cloudTable.statut! as any
+        })
       }
     }
     saveTables(mergedTables.filter((t, i, arr) => arr.findIndex(x => x.id === t.id) === i))
@@ -187,8 +237,26 @@ export async function syncFromCloud() {
 
     for (const cloudSejour of cloudSejours) {
       const existing = mergedSejours.find(s => s.id === cloudSejour.id)
-      if (!existing || new Date(cloudSejour.updatedAt) > new Date(existing.updatedAt)) {
-        mergedSejours.push(cloudSejour.toObject())
+      if (!existing || new Date((cloudSejour.updatedAt || cloudSejour.createdAt)!).getTime() > new Date(existing.createdAt).getTime()) {
+        mergedSejours.push({
+          id: cloudSejour.id!,
+          chambreId: cloudSejour.chambreId!,
+          chambreNumero: cloudSejour.chambreNumero || '',
+          clientNom: cloudSejour.clientNom!,
+          clientPrenom: cloudSejour.clientPrenom || '',
+          clientPiece: cloudSejour.clientPiece || '',
+          nombrePersonnes: cloudSejour.nombrePersonnes!,
+          dateArrivee: cloudSejour.dateArrivee!,
+          dateDepart: cloudSejour.dateDepart as string | null,
+          nuits: cloudSejour.nuits || 1,
+          prixNuit: cloudSejour.tarifNuit || 0,
+          consommations: cloudSejour.consommations || [],
+          statut: cloudSejour.statut! as any,
+          modePaiement: cloudSejour.modePaiement as string | null,
+          totalHebergement: cloudSejour.totalHebergement!,
+          totalConsommations: cloudSejour.totalConsommations || 0,
+          createdAt: cloudSejour.createdAt!
+        } as any)
       }
     }
     saveSejours(mergedSejours.filter((s, i, arr) => arr.findIndex(x => x.id === s.id) === i))
