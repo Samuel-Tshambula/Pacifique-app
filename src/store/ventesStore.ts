@@ -65,12 +65,14 @@ interface VentesStore {
   fetchProduits: () => Promise<void>
   fetchCommandes: () => Promise<void>
   selectionnerTable: (table: Table) => void
+  selectionnerTableOccupee: (table: Table, commande: Commande) => void
   ajouterAuPanier: (produit: Produit) => void
   retirerDuPanier: (produitId: string) => void
   modifierQuantite: (produitId: string, quantite: number) => void
   setNoteCommande: (note: string) => void
   viderPanier: () => void
   validerCommande: (serveurId: string, serveurNom: string) => Promise<Commande>
+  annulerCommande: (commandeId: string) => Promise<void>
   updateStatutLigne: (commandeId: string, ligneId: string, statut: string) => Promise<void>
   payerCommande: (commandeId: string, modePaiement: string) => Promise<void>
 }
@@ -101,6 +103,17 @@ export const useVentesStore = create<VentesStore>((set, get) => ({
 
   selectionnerTable: (table) => set({ tableSelectionnee: table, panier: [], noteCommande: '' }),
 
+  selectionnerTableOccupee: (table, commande) => {
+    const panier: LignePanier[] = commande.lignes.map((l) => ({
+      produitId: l.produitId,
+      produitNom: l.produitNom,
+      quantite: l.quantite,
+      prix: l.prix,
+      notes: l.notes,
+    }))
+    set({ tableSelectionnee: table, panier, noteCommande: commande.notes })
+  },
+
   ajouterAuPanier: (produit) => {
     const panier = get().panier
     const existant = panier.find((l) => l.produitId === produit.id)
@@ -119,7 +132,7 @@ export const useVentesStore = create<VentesStore>((set, get) => ({
   },
 
   setNoteCommande: (note) => set({ noteCommande: note }),
-  viderPanier: () => set({ panier: [], noteCommande: '', tableSelectionnee: null }),
+  viderPanier: () => set({ panier: [], noteCommande: '' }),
 
   validerCommande: async (serveurId, serveurNom) => {
     const { tableSelectionnee, panier, noteCommande } = get()
@@ -132,10 +145,16 @@ export const useVentesStore = create<VentesStore>((set, get) => ({
       notes: noteCommande,
       type: 'sur_place',
     })
+    set({ panier: [], noteCommande: '', tableSelectionnee: null })
+    get().fetchTables()
+    get().fetchCommandes()
+    return data
+  },
+
+  annulerCommande: async (commandeId) => {
+    await api.patch(`/commandes/${commandeId}/annuler`)
     await get().fetchTables()
     await get().fetchCommandes()
-    get().viderPanier()
-    return data
   },
 
   updateStatutLigne: async (commandeId, ligneId, statut) => {

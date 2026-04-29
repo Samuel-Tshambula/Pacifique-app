@@ -1,0 +1,205 @@
+.ticket-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  min-height: 100%;
+  background: #f3f4f6;
+}
+
+/* TOOLBAR */
+.ticket-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.btn-retour {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  color: #374151;
+  transition: background 0.2s;
+}
+.btn-retour:hover { background: #f3f4f6; }
+
+.btn-imprimer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background 0.2s;
+  flex: 1;
+  justify-content: center;
+}
+.btn-imprimer:hover { background: #1d4ed8; }
+
+/* TICKET */
+.ticket {
+  background: #fff;
+  width: 100%;
+  max-width: 380px;
+  padding: 24px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.ticket-entete {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.ticket-logo { font-size: 32px; margin-bottom: 4px; }
+
+.ticket-nom-etablissement {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.ticket-sous-titre {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 8px;
+}
+
+.ticket-separateur {
+  font-size: 11px;
+  color: #9ca3af;
+  letter-spacing: 1px;
+  margin: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticket-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.ticket-info-ligne {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.ticket-info-ligne span:first-child { color: #6b7280; }
+.ticket-info-ligne span:last-child { font-weight: 600; }
+
+.ticket-lignes-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+}
+
+.ticket-lignes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.ticket-ligne {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ticket-ligne-nom {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.ticket-ligne-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.ticket-ligne-montant {
+  font-weight: 700;
+  color: #111827;
+}
+
+.ticket-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 4px 0;
+}
+
+.ticket-notes {
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.ticket-pied {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.8;
+}
+
+.ticket-erreur, .ticket-loading {
+  text-align: center;
+  padding: 48px;
+  color: #6b7280;
+}
+
+/* ===== IMPRESSION ===== */
+@media print {
+  .no-print { display: none !important; }
+
+  body { background: #fff !important; margin: 0; }
+
+  .ticket-page {
+    padding: 0;
+    background: #fff;
+  }
+
+  .ticket {
+    box-shadow: none;
+    max-width: 100%;
+    width: 80mm;
+    margin: 0 auto;
+    font-size: 12px;
+  }
+
+  .ticket-nom-etablissement { font-size: 16px; }
+  .ticket-total { font-size: 16px; }
+}

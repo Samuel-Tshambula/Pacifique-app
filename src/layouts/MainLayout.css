@@ -9,4 +9,10 @@
   overflow-y: auto;
   background: #f3f4f6;
   padding: 24px;
+  min-width: 0;
+}
+
+.layout-content.no-padding {
+  padding: 0;
+  overflow: hidden;
 }

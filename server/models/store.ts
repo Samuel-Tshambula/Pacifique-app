@@ -65,13 +65,24 @@ function readJSON<T>(file: string, seed: T[]): T[] {
   if (!fs.existsSync(p)) {
     fs.mkdirSync(path.dirname(p), { recursive: true })
     writeJSON(file, seed)
+    return seed
+  }
+  const raw = fs.readFileSync(p, 'utf-8')
+  // Détection JSON en clair (migration)
+  try {
+    const plain = JSON.parse(raw)
+    console.info(`Migration chiffrement pour ${file}`)
+    writeJSON(file, plain)
+    return plain
+  } catch {
+    // pas du JSON brut, on tente le déchiffrement
   }
   try {
-    const encryptedData = fs.readFileSync(p, 'utf-8')
-    const decryptedData = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8)
-    return JSON.parse(decryptedData)
-  } catch (error) {
-    console.warn(`Erreur de déchiffrement pour ${file}, utilisation des données seed`)
+    const decrypted = CryptoJS.AES.decrypt(raw, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8)
+    return JSON.parse(decrypted)
+  } catch {
+    console.warn(`Fichier ${file} illisible, réinitialisation avec seed`)
+    writeJSON(file, seed)
     return seed
   }
 }

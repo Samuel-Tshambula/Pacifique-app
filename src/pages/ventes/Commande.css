@@ -1,8 +1,7 @@
 .commande-screen {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 48px);
-  margin: -24px;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -12,8 +11,9 @@
   justify-content: space-between;
   background: #1a1a2e;
   color: #fff;
-  padding: 12px 24px;
+  padding: 10px 20px;
   flex-shrink: 0;
+  gap: 16px;
 }
 
 .header-table {
@@ -29,6 +29,12 @@
   text-transform: capitalize;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .header-serveur {
   font-size: 14px;
   color: rgba(255,255,255,0.8);
@@ -39,6 +45,32 @@
   font-weight: 600;
   color: rgba(255,255,255,0.9);
 }
+
+.header-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 38px;
+  flex: 1;
+  max-width: 320px;
+  color: rgba(255,255,255,0.6);
+}
+
+.header-search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  flex: 1;
+}
+
+.header-search input::placeholder { color: rgba(255,255,255,0.4); }
 
 .commande-body {
   display: flex;
@@ -121,10 +153,45 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.produit-btn.selected {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.produit-btn.max-atteint {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
 .produit-btn.rupture {
   background: #f9fafb;
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.badge-qte {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.produits-vide {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 48px;
 }
 
 .produit-nom {
@@ -175,6 +242,18 @@
   font-weight: 700;
   padding: 16px;
   border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panier-nb-badge {
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 .panier-liste {
@@ -295,29 +374,29 @@
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
   transition: background 0.2s;
-  min-width: 200px;
+  min-width: 0;
 }
 
 .btn-annuler:hover { background: #dc2626; }
 
 .btn-valider {
-  flex: 1;
+  flex: 2;
   height: 60px;
   background: #22c55e;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
   transition: background 0.2s;
-  min-width: 200px;
+  min-width: 0;
 }
 
 .btn-valider:hover:not(:disabled) { background: #16a34a; }

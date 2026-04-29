@@ -4,13 +4,15 @@ import Sidebar from '../components/ui/Sidebar'
 import './MainLayout.css'
 
 const ROLE_ROUTES: Record<string, string[]> = {
-  admin:          ['/dashboard', '/ventes', '/cuisine', '/hebergement', '/stock', '/rapports', '/utilisateurs'],
-  gestionnaire:   ['/dashboard', '/ventes', '/stock', '/rapports'],
-  comptable:      ['/dashboard', '/rapports'],
-  serveur:        ['/ventes', '/ventes/commande'],
+  admin:          ['/dashboard', '/ventes', '/cuisine', '/hebergement', '/stock', '/rapports', '/utilisateurs', '/ticket'],
+  gestionnaire:   ['/dashboard', '/ventes', '/stock', '/rapports', '/ticket'],
+  comptable:      ['/dashboard', '/rapports', '/ticket'],
+  serveur:        ['/ventes', '/ventes/commande', '/ticket'],
   cuisinier:      ['/cuisine'],
-  receptionniste: ['/hebergement', '/ventes'],
+  receptionniste: ['/hebergement', '/ventes', '/ticket'],
 }
+
+const NO_PADDING_ROUTES = ['/ventes/commande']
 
 export default function MainLayout() {
   const { isAuthenticated, user } = useAuthStore()
@@ -22,10 +24,12 @@ export default function MainLayout() {
   const hasAccess = allowed.some((route) => location.pathname.startsWith(route))
   if (!hasAccess) return <Navigate to={allowed[0]} replace />
 
+  const noPadding = NO_PADDING_ROUTES.includes(location.pathname)
+
   return (
     <div className="layout">
       <Sidebar />
-      <main className="layout-content">
+      <main className={`layout-content${noPadding ? ' no-padding' : ''}`}>
         <Outlet />
       </main>
     </div>

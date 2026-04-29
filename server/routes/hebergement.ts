@@ -88,6 +88,33 @@ router.post('/checkout/:id', (req: Request, res: Response) => {
   res.json(sejour)
 })
 
+// Modifier une chambre (admin)
+router.put('/chambres/:id', (req: Request, res: Response) => {
+  const { numero, etage, type, prix, capacite } = req.body
+  if (!numero || !etage || !type || !prix)
+    return res.status(400).json({ message: 'Champs obligatoires manquants' })
+  const chambres = getChambres()
+  const idx = chambres.findIndex((c) => c.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ message: 'Chambre introuvable' })
+  chambres[idx] = { ...chambres[idx], numero, etage: Number(etage), type, prix: Number(prix), capacite: Number(capacite) || 1 }
+  saveChambres(chambres)
+  res.json(chambres[idx])
+})
+
+// Ajouter une chambre
+router.post('/chambres', (req: Request, res: Response) => {
+  const { numero, etage, type, prix, capacite } = req.body
+  if (!numero || !etage || !type || !prix)
+    return res.status(400).json({ message: 'Champs obligatoires manquants' })
+  const chambres = getChambres()
+  if (chambres.find((c) => c.numero === numero))
+    return res.status(400).json({ message: 'Ce numéro de chambre existe déjà' })
+  const newChambre = { id: uuid(), numero, etage: Number(etage), type, prix: Number(prix), capacite: Number(capacite) || 1, statut: 'libre' as const }
+  chambres.push(newChambre)
+  saveChambres(chambres)
+  res.status(201).json(newChambre)
+})
+
 // Marquer chambre comme nettoyée
 router.patch('/chambres/:id/statut', (req: Request, res: Response) => {
   const chambres = getChambres()

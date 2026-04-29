@@ -134,6 +134,33 @@ router.get('/:id/facture', (req: Request, res: Response) => {
   res.json(facture)
 })
 
+// Annuler une commande (remet le stock + libère la table)
+router.patch('/:id/annuler', (req: Request, res: Response) => {
+  const commandes = getCommandes()
+  const commande = commandes.find((c) => c.id === req.params.id)
+  if (!commande) return res.status(404).json({ message: 'Commande introuvable' })
+  if (commande.statut === 'payee') return res.status(400).json({ message: 'Impossible d\'annuler une commande payée' })
+
+  // Remettre le stock
+  const produits = getProduits()
+  for (const ligne of commande.lignes) {
+    const produit = produits.find((p) => p.id === ligne.produitId)
+    if (produit) produit.stock += ligne.quantite
+  }
+  saveProduits(produits)
+
+  commande.statut = 'annulee'
+  commande.updatedAt = new Date().toISOString()
+  saveCommandes(commandes)
+
+  // Libérer la table
+  const tables = getTables()
+  const table = tables.find((t) => t.id === commande.tableId)
+  if (table) { table.statut = 'libre'; saveTables(tables) }
+
+  res.json(commande)
+})
+
 // Payer une commande
 router.patch('/:id/payer', (req: Request, res: Response) => {
   const commandes = getCommandes()

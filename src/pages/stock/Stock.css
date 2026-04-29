@@ -171,8 +171,12 @@
 
 .btn-approvisioner { background: #eff6ff; color: #2563eb; }
 .btn-approvisioner:hover { background: #dbeafe; }
+.btn-edit { background: #f0fdf4; color: #16a34a; }
+.btn-edit:hover { background: #dcfce7; }
 .btn-historique { background: #f3f4f6; color: #6b7280; }
 .btn-historique:hover { background: #e5e7eb; }
+.btn-delete { background: #fff5f5; color: #ef4444; }
+.btn-delete:hover { background: #fee2e2; }
 
 .stock-empty {
   text-align: center;

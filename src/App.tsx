@@ -9,6 +9,7 @@ import Cuisine from './pages/cuisine/Cuisine'
 import Utilisateurs from './pages/admin/Utilisateurs'
 import Stock from './pages/stock/Stock'
 import Hebergement from './pages/hebergement/Hebergement'
+import Ticket from './pages/ticket/Ticket'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/utilisateurs" element={<Utilisateurs />} />
           <Route path="/hebergement" element={<Hebergement />} />
           <Route path="/stock" element={<Stock />} />
+          <Route path="/ticket/:id" element={<Ticket />} />
           <Route path="/rapports" element={<div style={{padding:24}}>Module Rapports — à venir</div>} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

@@ -45,15 +45,39 @@ router.post('/', (req: Request, res: Response) => {
   res.status(201).json(newProduit)
 })
 
-// Modifier un produit
+// Modifier un produit (partiel)
 router.patch('/:id', (req: Request, res: Response) => {
   const produits = getProduits()
   const produit = produits.find((p) => p.id === req.params.id)
   if (!produit) return res.status(404).json({ message: 'Produit introuvable' })
-
   Object.assign(produit, req.body)
   saveProduits(produits)
   res.json(produit)
+})
+
+// Modifier un produit (complet)
+router.put('/:id', (req: Request, res: Response) => {
+  const { code, nom, prix, categorie, stock, stockMin, unite } = req.body
+  if (!code || !nom || prix === undefined || !categorie)
+    return res.status(400).json({ message: 'Champs obligatoires manquants' })
+  const produits = getProduits()
+  const idx = produits.findIndex((p) => p.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ message: 'Produit introuvable' })
+  const codeExist = produits.find((p) => p.code === code && p.id !== req.params.id)
+  if (codeExist) return res.status(400).json({ message: 'Ce code produit existe déjà' })
+  produits[idx] = { ...produits[idx], code, nom, prix: Number(prix), categorie, stock: Number(stock) || 0, stockMin: Number(stockMin) || 5, unite: unite || 'pièce' }
+  saveProduits(produits)
+  res.json(produits[idx])
+})
+
+// Désactiver un produit (soft delete)
+router.delete('/:id', (req: Request, res: Response) => {
+  const produits = getProduits()
+  const produit = produits.find((p) => p.id === req.params.id)
+  if (!produit) return res.status(404).json({ message: 'Produit introuvable' })
+  produit.actif = false
+  saveProduits(produits)
+  res.json({ message: 'Produit désactivé' })
 })
 
 // Mouvement de stock (entrée / ajustement)

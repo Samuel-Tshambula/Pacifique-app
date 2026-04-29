@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../../services/api'
 import { useAuthStore } from '../../store/authStore'
 import toast from 'react-hot-toast'
-import { Plus, History, Search, X, Check, PackagePlus } from 'lucide-react'
+import { Plus, History, Search, X, Check, PackagePlus, Pencil, Trash2 } from 'lucide-react'
 import './Stock.css'
 
 const CATEGORIES = ['Tous', 'Burgers', 'Pizzas', 'Plats', 'Boissons']
@@ -30,6 +30,7 @@ interface Mouvement {
 }
 
 const EMPTY_PRODUIT = { code: '', nom: '', prix: '', categorie: 'Boissons', stock: '', stockMin: '', unite: 'pièce' }
+const CATEGORIES_LIST = ['Burgers', 'Pizzas', 'Plats', 'Boissons']
 
 export default function Stock() {
   const { user } = useAuthStore()
@@ -37,6 +38,8 @@ export default function Stock() {
   const [search, setSearch] = useState('')
   const [categorie, setCategorie] = useState('Tous')
   const [showAddProduit, setShowAddProduit] = useState(false)
+  const [showEditProduit, setShowEditProduit] = useState<Produit | null>(null)
+  const [formEdit, setFormEdit] = useState(EMPTY_PRODUIT)
   const [showMouvement, setShowMouvement] = useState<Produit | null>(null)
   const [showHistorique, setShowHistorique] = useState<Produit | null>(null)
   const [mouvements, setMouvements] = useState<Mouvement[]>([])
@@ -93,6 +96,35 @@ export default function Stock() {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       toast.error(msg || 'Erreur')
     } finally { setLoading(false) }
+  }
+
+  function openEdit(p: Produit) {
+    setFormEdit({ code: p.code, nom: p.nom, prix: String(p.prix), categorie: p.categorie, stock: String(p.stock), stockMin: String(p.stockMin), unite: p.unite })
+    setShowEditProduit(p)
+  }
+
+  async function handleEditProduit() {
+    if (!formEdit.code || !formEdit.nom || !formEdit.prix)
+      return toast.error('Remplissez tous les champs obligatoires')
+    setLoading(true)
+    try {
+      await api.put(`/stock/${showEditProduit!.id}`, formEdit)
+      toast.success('Produit modifié')
+      setShowEditProduit(null)
+      fetchProduits()
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      toast.error(msg || 'Erreur')
+    } finally { setLoading(false) }
+  }
+
+  async function handleDeleteProduit(p: Produit) {
+    if (!confirm(`Désactiver "${p.nom}" ?`)) return
+    try {
+      await api.delete(`/stock/${p.id}`)
+      toast.success('Produit désactivé')
+      fetchProduits()
+    } catch { toast.error('Erreur') }
   }
 
   async function openHistorique(p: Produit) {
@@ -192,8 +224,14 @@ export default function Stock() {
                     <button className="btn-action btn-approvisioner" onClick={() => { setShowMouvement(p); setFormMouvement({ type: 'entree', quantite: '', motif: '' }) }} title="Approvisionner">
                       <PackagePlus size={15} />
                     </button>
+                    <button className="btn-action btn-edit" onClick={() => openEdit(p)} title="Modifier">
+                      <Pencil size={15} />
+                    </button>
                     <button className="btn-action btn-historique" onClick={() => openHistorique(p)} title="Historique">
                       <History size={15} />
+                    </button>
+                    <button className="btn-action btn-delete" onClick={() => handleDeleteProduit(p)} title="Désactiver">
+                      <Trash2 size={15} />
                     </button>
                   </td>
                 </tr>
@@ -223,7 +261,7 @@ export default function Stock() {
                 <div className="form-group">
                   <label>Catégorie *</label>
                   <select value={formProduit.categorie} onChange={(e) => setFormProduit({ ...formProduit, categorie: e.target.value })}>
-                    {['Burgers', 'Pizzas', 'Plats', 'Boissons'].map((c) => <option key={c}>{c}</option>)}
+                    {CATEGORIES_LIST.map((c) => <option key={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
@@ -255,6 +293,62 @@ export default function Stock() {
             <div className="modal-footer">
               <button className="btn-cancel" onClick={() => setShowAddProduit(false)}>Annuler</button>
               <button className="btn-save" onClick={handleAddProduit} disabled={loading}>
+                <Check size={16} /> {loading ? 'Enregistrement...' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDITION */}
+      {showEditProduit && (
+        <div className="modal-overlay" onClick={() => setShowEditProduit(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Modifier le produit</h3>
+              <button className="modal-close" onClick={() => setShowEditProduit(null)}><X size={20} /></button>
+            </div>
+            <div className="modal-body">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Code *</label>
+                  <input type="text" value={formEdit.code} onChange={(e) => setFormEdit({ ...formEdit, code: e.target.value })} autoComplete="off" />
+                </div>
+                <div className="form-group">
+                  <label>Catégorie *</label>
+                  <select value={formEdit.categorie} onChange={(e) => setFormEdit({ ...formEdit, categorie: e.target.value })}>
+                    {CATEGORIES_LIST.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Nom du produit *</label>
+                <input type="text" value={formEdit.nom} onChange={(e) => setFormEdit({ ...formEdit, nom: e.target.value })} autoComplete="off" />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Prix unitaire (FC) *</label>
+                  <input type="number" value={formEdit.prix} onChange={(e) => setFormEdit({ ...formEdit, prix: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Unité</label>
+                  <input type="text" value={formEdit.unite} onChange={(e) => setFormEdit({ ...formEdit, unite: e.target.value })} autoComplete="off" />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Stock actuel</label>
+                  <input type="number" value={formEdit.stock} onChange={(e) => setFormEdit({ ...formEdit, stock: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Stock minimum</label>
+                  <input type="number" value={formEdit.stockMin} onChange={(e) => setFormEdit({ ...formEdit, stockMin: e.target.value })} />
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-cancel" onClick={() => setShowEditProduit(null)}>Annuler</button>
+              <button className="btn-save" onClick={handleEditProduit} disabled={loading}>
                 <Check size={16} /> {loading ? 'Enregistrement...' : 'Enregistrer'}
               </button>
             </div>
