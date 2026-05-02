@@ -7,21 +7,21 @@
   margin-bottom: 24px;
 }
 
-.cuisine-header h2 { font-size: 24px; font-weight: 700; }
+.cuisine-header h2 { font-size: 24px; font-weight: 700; color: var(--gray-900); }
 
 .cuisine-count {
-  background: #1a1a2e;
+  background: var(--bg-sidebar);
   color: #fff;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
 .cuisine-vide {
   text-align: center;
-  font-size: 20px;
-  color: #6b7280;
+  font-size: 18px;
+  color: var(--gray-400);
   padding: 80px;
 }
 
@@ -32,13 +32,16 @@
 }
 
 .commande-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   padding: 16px;
   width: 320px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border-top: 4px solid #f59e0b;
+  box-shadow: var(--shadow-sm);
+  border-top: 4px solid var(--warning);
+  transition: var(--transition);
 }
+
+.commande-card:hover { box-shadow: var(--shadow); }
 
 .card-header {
   display: flex;
@@ -47,31 +50,18 @@
   margin-bottom: 12px;
 }
 
-.card-table {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.card-numero {
-  font-size: 11px;
-  color: #9ca3af;
-  flex: 1;
-}
-
-.card-heure {
-  font-size: 13px;
-  font-weight: 600;
-  color: #f59e0b;
-}
+.card-table  { font-size: 18px; font-weight: 700; color: var(--bg-sidebar); }
+.card-numero { font-size: var(--text-xs); color: var(--gray-400); flex: 1; }
+.card-heure  { font-size: var(--text-sm); font-weight: 600; color: var(--warning); }
 
 .card-notes {
-  background: #fef3c7;
+  background: var(--warning-light);
   color: #92400e;
   padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
   margin-bottom: 12px;
+  border-left: 3px solid var(--warning);
 }
 
 .card-lignes { display: flex; flex-direction: column; gap: 8px; }
@@ -81,26 +71,25 @@
   align-items: center;
   gap: 8px;
   padding: 10px;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: var(--gray-50);
+  border-radius: var(--radius);
   flex-wrap: wrap;
 }
 
 .ligne-info { display: flex; align-items: center; gap: 6px; flex: 1; }
 
 .ligne-qte {
-  background: #1a1a2e;
+  background: var(--bg-sidebar);
   color: #fff;
   padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
-.ligne-nom { font-size: 14px; font-weight: 600; }
-.ligne-note { font-size: 11px; color: #6b7280; font-style: italic; }
-
-.ligne-statut { font-size: 12px; font-weight: 600; }
+.ligne-nom    { font-size: var(--text-base); font-weight: 600; color: var(--gray-900); }
+.ligne-note   { font-size: var(--text-xs); color: var(--gray-500); font-style: italic; }
+.ligne-statut { font-size: var(--text-xs); font-weight: 600; }
 
 .ligne-actions { width: 100%; display: flex; justify-content: flex-end; }
 
@@ -108,30 +97,30 @@
   background: #3b82f6;
   color: #fff;
   border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Roboto', sans-serif;
-  min-height: 50px;
-  transition: background 0.2s;
+  font-family: var(--font);
+  min-height: 44px;
+  transition: var(--transition);
 }
 
-.btn-prendre:hover { background: #2563eb; }
+.btn-prendre:hover { background: var(--primary); }
 
 .btn-pret {
-  background: #22c55e;
+  background: var(--success);
   color: #fff;
   border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Roboto', sans-serif;
-  min-height: 50px;
-  transition: background 0.2s;
+  font-family: var(--font);
+  min-height: 44px;
+  transition: var(--transition);
 }
 
-.btn-pret:hover { background: #16a34a; }
+.btn-pret:hover { background: var(--success-hover); }

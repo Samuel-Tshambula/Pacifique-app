@@ -5,7 +5,7 @@ import './Sidebar.css'
 
 const NAV_ITEMS = [
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Tableau de bord', roles: ['admin', 'gestionnaire', 'comptable'] },
-  { to: '/ventes',       icon: ShoppingCart,    label: 'Ventes',          roles: ['admin', 'serveur', 'gestionnaire', 'receptionniste'] },
+  { to: '/ventes',       icon: ShoppingCart,    label: 'Ventes',          roles: ['admin', 'serveur', 'gestionnaire', 'receptionniste'], badge: true },
   { to: '/cuisine',      icon: ChefHat,         label: 'Cuisine',         roles: ['admin', 'cuisinier', 'gestionnaire'] },
   { to: '/hebergement',  icon: BedDouble,        label: 'Hébergement',     roles: ['admin', 'receptionniste', 'gestionnaire'] },
   { to: '/stock',        icon: Package,          label: 'Stock',           roles: ['admin', 'gestionnaire'] },
@@ -22,7 +22,11 @@ const ROLE_LABELS: Record<string, string> = {
   comptable: 'Comptable',
 }
 
-export default function Sidebar() {
+interface SidebarProps {
+  badgeVentes?: number
+}
+
+export default function Sidebar({ badgeVentes = 0 }: SidebarProps) {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
 
@@ -41,10 +45,13 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {allowed.map(({ to, icon: Icon, label }) => (
+        {allowed.map(({ to, icon: Icon, label, badge }) => (
           <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <Icon size={20} />
             <span>{label}</span>
+            {badge && badgeVentes > 0 && (
+              <span className="nav-badge">{badgeVentes}</span>
+            )}
           </NavLink>
         ))}
       </nav>
