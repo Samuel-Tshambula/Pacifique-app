@@ -1,10 +1,12 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
 const isDev = process.env.NODE_ENV === 'development'
 
+let mainWindow = null
+
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1366,
     height: 768,
     minWidth: 1366,
@@ -19,14 +21,24 @@ function createWindow() {
   })
 
   if (isDev) {
-    win.loadURL('http://localhost:5173')
-    win.webContents.openDevTools()
+    mainWindow.loadURL('http://localhost:5173')
+    mainWindow.webContents.openDevTools()
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'))
+    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 
-  win.once('ready-to-show', () => win.show())
+  mainWindow.once('ready-to-show', () => mainWindow.show())
 }
+
+ipcMain.handle('print-ticket', async () => {
+  if (!mainWindow) throw new Error('Fenêtre principale introuvable')
+  return new Promise((resolve, reject) => {
+    mainWindow.webContents.print({ silent: false, printBackground: true }, (success, failureReason) => {
+      if (success) resolve({ success: true })
+      else reject(new Error(failureReason || 'Impression annulée'))
+    })
+  })
+})
 
 app.whenReady().then(createWindow)
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit() })

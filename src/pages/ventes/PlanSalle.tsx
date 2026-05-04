@@ -1,53 +1,47 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useVentesStore } from '../../store/ventesStore'
-import type { Table, Commande } from '../../store/ventesStore'
+import type { Table } from '../../store/ventesStore'
 import toast from 'react-hot-toast'
-import { X, Check, Printer } from 'lucide-react'
+import { X, Bell, CreditCard, Banknote, Smartphone } from 'lucide-react'
 import './PlanSalle.css'
 
 const STATUT_CONFIG = {
-  libre:     { label: 'Libre',     color: '#22c55e' },
-  occupee:   { label: 'Occupée',   color: '#ef4444' },
-  reservee:  { label: 'Réservée',  color: '#3b82f6' },
-  nettoyage: { label: 'Nettoyage', color: '#f59e0b' },
+  libre:     { label: 'Libre',      color: '#22c55e' },
+  occupee:   { label: 'Occupée',    color: '#ef4444' },
+  reservee:  { label: 'Réservée',   color: '#3b82f6' },
+  nettoyage: { label: 'Nettoyage',  color: '#f59e0b' },
 }
 
-const MODES_PAIEMENT = ['Cash', 'Mobile Money', 'Carte']
 const ZONES = ['salle', 'terrasse', 'bar'] as const
+const MODES_PAIEMENT = [
+  { id: 'especes',  label: 'Espèces',   icon: Banknote },
+  { id: 'carte',    label: 'Carte',     icon: CreditCard },
+  { id: 'mobile',   label: 'Mobile',    icon: Smartphone },
+]
 
 export default function PlanSalle() {
-  const { tables, commandes, fetchTables, fetchCommandes, selectionnerTable, selectionnerTableOccupee, annulerCommande, payerCommande } = useVentesStore()
+  const { tables, commandes, fetchTables, fetchCommandes, selectionnerTable, payerCommande, updateStatutLigne } = useVentesStore()
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [erreur, setErreur] = useState(false)
-  const [liberant, setLiberant] = useState<string | null>(null)
-  const [modalPaiement, setModalPaiement] = useState<{ table: Table; commande: Commande } | null>(null)
-  const [modePaiement, setModePaiement] = useState('Cash')
-  const [payant, setPayant] = useState(false)
-  const [ticketCommandeId, setTicketCommandeId] = useState<string | null>(null)
+
+  const [tableModal, setTableModal] = useState<Table | null>(null)
+  const [modePaiement, setModePaiement] = useState('especes')
+  const [paying, setPaying] = useState(false)
 
   useEffect(() => {
-    setLoading(tables.length === 0)
-    Promise.all([fetchTables(), fetchCommandes()])
-      .catch(() => { if (tables.length === 0) setErreur(true) })
-      .finally(() => setLoading(false))
-  }, [])
+    fetchTables()
+    fetchCommandes()
+    const interval = setInterval(() => { fetchTables(); fetchCommandes() }, 5000)
+    return () => clearInterval(interval)
+  }, [fetchTables, fetchCommandes])
 
-  function getCommandeTable(table: Table) {
-    return commandes.find((c) => c.tableId === table.id && c.statut === 'en_cours')
-  }
+  // Commandes prêtes (toutes lignes pret ou servi)
+  const commandesPrêtes = commandes.filter((c) =>
+    c.statut === 'prete' || (c.statut === 'en_cours' && c.lignes.every((l) => l.statut === 'pret' || l.statut === 'servi'))
+  )
 
-  async function handleLibererTable(e: React.MouseEvent, table: Table) {
-    e.stopPropagation()
-    const commande = getCommandeTable(table)
-    if (!commande) return
-    if (!confirm(`Annuler la commande de la Table ${table.numero} et libérer la table ?`)) return
-    setLiberant(table.id)
-    try {
-      await annulerCommande(commande.id)
-      toast.success(`Table ${table.numero} libérée`)
-    } finally { setLiberant(null) }
+  function getCommandeTable(tableId: string) {
+    return commandes.find((c) => c.tableId === tableId && (c.statut === 'en_cours' || c.statut === 'prete'))
   }
 
   function handleSelectTable(table: Table) {
@@ -55,63 +49,58 @@ export default function PlanSalle() {
       selectionnerTable(table)
       navigate('/ventes/commande')
     } else if (table.statut === 'occupee') {
-      const commande = getCommandeTable(table)
-      if (commande) { selectionnerTableOccupee(table, commande); navigate('/ventes/commande') }
+      setTableModal(table)
+      setModePaiement('especes')
     }
   }
 
-  function openPaiement(e: React.MouseEvent, table: Table) {
-    e.stopPropagation()
-    const commande = getCommandeTable(table)
-    if (!commande) return
-    setModePaiement('Cash')
-    setModalPaiement({ table, commande })
+  async function handleMarquerServi(commandeId: string, ligneId: string) {
+    await updateStatutLigne(commandeId, ligneId, 'servi')
+    toast.success('Plat marqué comme servi')
   }
 
   async function handlePayer() {
-    if (!modalPaiement) return
-    setPayant(true)
+    const commande = getCommandeTable(tableModal!.id)
+    if (!commande) return
+    setPaying(true)
     try {
-      await payerCommande(modalPaiement.commande.id, modePaiement)
-      toast.success(`Table ${modalPaiement.table.numero} — Paiement enregistré (${modePaiement})`)
-      setTicketCommandeId(modalPaiement.commande.id)
-      setModalPaiement(null)
+      await payerCommande(commande.id, modePaiement)
+      toast.success(`Table ${tableModal!.numero} — Paiement enregistré ✅`)
+      setTableModal(null)
+      navigate(`/ticket/${commande.id}`)
     } catch {
       toast.error('Erreur lors du paiement')
-    } finally { setPayant(false) }
+    } finally {
+      setPaying(false)
+    }
   }
 
-  if (loading) return <div className="plan-loading">Chargement...</div>
-  if (erreur) return <div className="plan-erreur">⚠️ Impossible de contacter le serveur.</div>
-
-  const tablesLibres = tables.filter((t) => t.statut === 'libre').length
-  const tablesOccupees = tables.filter((t) => t.statut === 'occupee').length
-  const caJour = commandes.reduce((sum, c) => sum + c.total, 0)
+  const commandeModal = tableModal ? getCommandeTable(tableModal.id) : null
 
   return (
     <div className="plan-salle">
       <div className="plan-header">
-        <div>
-          <h2>Plan de salle</h2>
-          <p className="plan-sous-titre">
-            {tables.length} tables · <span style={{ color: '#22c55e' }}>{tablesLibres} libres</span> · <span style={{ color: '#ef4444' }}>{tablesOccupees} occupées</span>
-          </p>
-        </div>
-        <div className="plan-header-right">
-          <div className="ca-badge">
-            <span className="ca-label">CA en cours</span>
-            <span className="ca-value">{caJour.toLocaleString()} FC</span>
-          </div>
-          <div className="legende">
-            {Object.entries(STATUT_CONFIG).map(([key, val]) => (
-              <div key={key} className="legende-item">
-                <span className="legende-dot" style={{ background: val.color }} />
-                <span>{val.label}</span>
-              </div>
-            ))}
-          </div>
+        <h2>Plan de salle</h2>
+        <div className="legende">
+          {Object.entries(STATUT_CONFIG).map(([key, val]) => (
+            <div key={key} className="legende-item">
+              <span className="legende-dot" style={{ background: val.color }} />
+              <span>{val.label}</span>
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* BANDEAU PLATS PRÊTS */}
+      {commandesPrêtes.length > 0 && (
+        <div className="plats-prets-banner">
+          <span className="prets-icon"><Bell size={18} /></span>
+          <span className="prets-text">
+            <strong>{commandesPrêtes.length} commande(s) prête(s) à servir :</strong>{' '}
+            {commandesPrêtes.map((c) => `Table ${c.tableNumero}`).join(', ')}
+          </span>
+        </div>
+      )}
 
       {ZONES.map((zone) => {
         const tablesZone = tables.filter((t) => t.zone === zone)
@@ -122,39 +111,26 @@ export default function PlanSalle() {
             <div className="tables-grid">
               {tablesZone.map((table) => {
                 const config = STATUT_CONFIG[table.statut]
-                const commande = getCommandeTable(table)
-                const clickable = table.statut === 'libre' || table.statut === 'occupee'
+                const commande = getCommandeTable(table.id)
+                const isPrete = commande && (commande.statut === 'prete' || commande.lignes.every((l) => l.statut === 'pret' || l.statut === 'servi'))
                 return (
                   <button
                     key={table.id}
-                    className={`table-tile ${clickable ? 'clickable' : 'non-clickable'}`}
-                    style={{ borderColor: config.color, background: `${config.color}18` }}
+                    className={`table-tile clickable ${isPrete ? 'prete' : ''}`}
+                    style={{ borderColor: isPrete ? '#22c55e' : config.color, background: isPrete ? '#f0fdf4' : `${config.color}18` }}
                     onClick={() => handleSelectTable(table)}
-                    title={table.statut === 'occupee' ? 'Modifier la commande' : table.statut === 'libre' ? 'Nouvelle commande' : `Table ${table.statut}`}
+                    title={table.statut === 'libre' ? 'Cliquer pour commander' : 'Cliquer pour gérer la table'}
                   >
-                    <div className="table-numero" style={{ color: config.color }}>Table {table.numero}</div>
+                    <div className="table-numero" style={{ color: isPrete ? '#16a34a' : config.color }}>
+                      Table {table.numero}
+                    </div>
                     <div className="table-capacite">{table.capacite} pers.</div>
-                    {commande ? (
-                      <div className="table-commande-info">
-                        <span className="table-nb-articles">{commande.lignes.length} article{commande.lignes.length > 1 ? 's' : ''}</span>
-                        <span className="table-total">{commande.total.toLocaleString()} FC</span>
-                        <div className="table-actions">
-                          <button className="btn-payer" onClick={(e) => openPaiement(e, table)} title="Encaisser">
-                            💳 Payer
-                          </button>
-                          <button
-                            className="btn-liberer"
-                            onClick={(e) => handleLibererTable(e, table)}
-                            disabled={liberant === table.id}
-                            title="Annuler et libérer"
-                          >
-                            {liberant === table.id ? '...' : '✕'}
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="table-statut" style={{ color: config.color }}>{config.label}</div>
+                    {commande && (
+                      <div className="table-total">{commande.total.toLocaleString()} FC</div>
                     )}
+                    <div className="table-statut" style={{ color: isPrete ? '#16a34a' : config.color }}>
+                      {isPrete ? '✅ Prête' : config.label}
+                    </div>
                   </button>
                 )
               })}
@@ -163,76 +139,84 @@ export default function PlanSalle() {
         )
       })}
 
-      {/* MODAL PAIEMENT */}
-      {modalPaiement && (
-        <div className="modal-overlay" onClick={() => setModalPaiement(null)}>
-          <div className="modal-paiement" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-paiement-header">
-              <h3>Encaisser — Table {modalPaiement.table.numero}</h3>
-              <button className="modal-close" onClick={() => setModalPaiement(null)}><X size={20} /></button>
+      {/* MODAL TABLE OCCUPÉE */}
+      {tableModal && (
+        <div className="modal-overlay" onClick={() => setTableModal(null)}>
+          <div className="modal modal-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <h3>Table {tableModal.numero} — {tableModal.zone}</h3>
+                {commandeModal && (
+                  <div className="modal-subtitle">{commandeModal.numero} · {commandeModal.serveurNom}</div>
+                )}
+              </div>
+              <button className="modal-close" onClick={() => setTableModal(null)}><X size={20} /></button>
             </div>
 
-            <div className="modal-paiement-body">
-              <div className="recap-lignes">
-                {modalPaiement.commande.lignes.map((l) => (
-                  <div key={l.id} className="recap-ligne">
-                    <span>{l.produitNom}</span>
-                    <span>x{l.quantite}</span>
-                    <span>{(l.prix * l.quantite).toLocaleString()} FC</span>
+            {!commandeModal ? (
+              <div className="modal-body">
+                <div className="empty-state">Aucune commande active sur cette table</div>
+              </div>
+            ) : (
+              <>
+                <div className="modal-body">
+                  {/* LIGNES COMMANDE */}
+                  <div className="commande-lignes-list">
+                    {commandeModal.lignes.map((ligne) => (
+                      <div key={ligne.id} className={`commande-ligne-row statut-${ligne.statut}`}>
+                        <span className="cl-qte">x{ligne.quantite}</span>
+                        <span className="cl-nom">{ligne.produitNom}</span>
+                        <span className={`cl-badge statut-badge-${ligne.statut}`}>
+                          {ligne.statut === 'en_attente'    && 'En attente'}
+                          {ligne.statut === 'en_preparation' && 'En préparation'}
+                          {ligne.statut === 'pret'           && 'Prêt'}
+                          {ligne.statut === 'servi'          && 'Servi'}
+                        </span>
+                        <span className="cl-prix">{(ligne.prix * ligne.quantite).toLocaleString()} FC</span>
+                        {ligne.statut === 'pret' && (
+                          <button className="btn-servi-inline" onClick={() => handleMarquerServi(commandeModal.id, ligne.id)}>
+                            Marquer servi
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              <div className="recap-total">
-                TOTAL : <strong>{modalPaiement.commande.total.toLocaleString()} FC</strong>
-              </div>
+                  {commandeModal.notes && (
+                    <div className="commande-notes-box">Note : {commandeModal.notes}</div>
+                  )}
 
-              <div className="modes-paiement">
-                <p>Mode de paiement</p>
-                <div className="modes-grid">
-                  {MODES_PAIEMENT.map((mode) => (
-                    <button
-                      key={mode}
-                      className={`mode-btn ${modePaiement === mode ? 'active' : ''}`}
-                      onClick={() => setModePaiement(mode)}
-                    >
-                      {mode === 'Cash' ? '💵' : mode === 'Mobile Money' ? '📱' : '💳'} {mode}
-                    </button>
-                  ))}
+                  <div className="commande-total-row">
+                    <span>Total</span>
+                    <strong>{commandeModal.total.toLocaleString()} FC</strong>
+                  </div>
+
+                  {/* MODE PAIEMENT */}
+                  <div className="paiement-section">
+                    <div className="paiement-label">Mode de paiement</div>
+                    <div className="paiement-modes">
+                      {MODES_PAIEMENT.map(({ id, label, icon: Icon }) => (
+                        <button
+                          key={id}
+                          className={`mode-btn ${modePaiement === id ? 'active' : ''}`}
+                          onClick={() => setModePaiement(id)}
+                        >
+                          <Icon size={18} />
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="modal-paiement-footer">
-              <button className="btn-cancel-paiement" onClick={() => setModalPaiement(null)}>Annuler</button>
-              <button className="btn-confirmer-paiement" onClick={handlePayer} disabled={payant}>
-                <Check size={16} /> {payant ? 'Traitement...' : `Confirmer — ${modalPaiement.commande.total.toLocaleString()} FC`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* MODAL TICKET APRES PAIEMENT */}
-      {ticketCommandeId && (
-        <div className="modal-overlay" onClick={() => setTicketCommandeId(null)}>
-          <div className="modal-paiement" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 360 }}>
-            <div className="modal-paiement-header">
-              <h3>Paiement confirmé ✓</h3>
-              <button className="modal-close" onClick={() => setTicketCommandeId(null)}><X size={20} /></button>
-            </div>
-            <div className="modal-paiement-body" style={{ alignItems: 'center', textAlign: 'center', gap: 8 }}>
-              <div style={{ fontSize: 48 }}>🧾</div>
-              <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>Voulez-vous imprimer le ticket de caisse ?</p>
-            </div>
-            <div className="modal-paiement-footer">
-              <button className="btn-cancel-paiement" onClick={() => setTicketCommandeId(null)}>Non merci</button>
-              <button
-                className="btn-confirmer-paiement"
-                onClick={() => { navigate(`/ticket/${ticketCommandeId}`); setTicketCommandeId(null) }}
-              >
-                <Printer size={16} /> Voir le ticket
-              </button>
-            </div>
+                <div className="modal-footer">
+                  <button className="btn-cancel" onClick={() => setTableModal(null)}>Fermer</button>
+                  <button className="btn-payer" onClick={handlePayer} disabled={paying}>
+                    {paying ? 'Traitement...' : <><CreditCard size={16} /> Encaisser {commandeModal.total.toLocaleString()} FC</>}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ import utilisateursRoutes from './routes/utilisateurs.js'
 import stockRoutes from './routes/stock.js'
 import hebergementRoutes from './routes/hebergement.js'
 import dashboardRoutes from './routes/dashboard.js'
+import rapportsRoutes from './routes/rapports.js'
 
 dotenv.config()
 
@@ -45,6 +46,7 @@ app.use('/api/utilisateurs', utilisateursRoutes)
 app.use('/api/stock', stockRoutes)
 app.use('/api/hebergement', hebergementRoutes)
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/rapports', rapportsRoutes)
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 

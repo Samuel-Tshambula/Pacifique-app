@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import Sidebar from '../components/ui/Sidebar'
+import { useNotificationsPlats } from '../hooks/useNotificationsPlats'
 import './MainLayout.css'
 
 const ROLE_ROUTES: Record<string, string[]> = {
@@ -17,6 +19,9 @@ const NO_PADDING_ROUTES = ['/ventes/commande']
 export default function MainLayout() {
   const { isAuthenticated, user } = useAuthStore()
   const location = useLocation()
+  const [badgeVentes, setBadgeVentes] = useState(0)
+
+  useNotificationsPlats(setBadgeVentes)
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
 
@@ -29,7 +34,7 @@ export default function MainLayout() {
   return (
     <div className="layout">
       <Sidebar />
-      <main className={`layout-content${noPadding ? ' no-padding' : ''}`}>
+      <main className="layout-content">
         <Outlet />
       </main>
     </div>
