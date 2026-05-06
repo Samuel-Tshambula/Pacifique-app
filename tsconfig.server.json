@@ -1,13 +1,26 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "outDir": "./dist-server",
-    "rootDir": "./server",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "declaration": false,
+    "sourceMap": false
   },
-  "include": ["server/**/*"]
+  "include": [
+    "server/**/*",
+    "config/**/*",
+    "services/**/*",
+    "sync/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src"
+  ]
 }

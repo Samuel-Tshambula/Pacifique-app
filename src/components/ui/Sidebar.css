@@ -134,3 +134,105 @@
   0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.15); }
 }
+
+/* ─── Statut Socket.IO (Étape 7) ─────────────────────────────────────────── */
+
+.sidebar-socket-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 10px 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
+  cursor: default;
+  user-select: none;
+}
+
+/* Animation spin pour l'icône "connecting" */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ─── Groupe d'indicateurs de statut (Étapes 7, 8, 9) ───────────────────── */
+
+.sidebar-status-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 10px 8px;
+}
+
+/* Statut réseau — Étape 8 */
+.sidebar-network-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
+  user-select: none;
+  position: relative;
+}
+
+.sidebar-network-status.online {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.sidebar-network-status.offline {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.queue-badge {
+  margin-left: auto;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  animation: pulse-badge 1.5s infinite;
+}
+
+/* Statut sync cloud — Étape 9 */
+.sidebar-sync-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.sidebar-sync-status.synced {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.sidebar-sync-status.synced:hover {
+  background: #dbeafe;
+}
+
+.sidebar-sync-status.unsynced {
+  background: #f9fafb;
+  color: #9ca3af;
+}

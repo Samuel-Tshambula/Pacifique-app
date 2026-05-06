@@ -10,7 +10,20 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-server
+release
 *.local
+
+# Variables d'environnement — ne jamais committer
+.env
+.env.local
+.env.*.local
+
+# Sauvegardes config
+config.json.bak
+
+# Données locales chiffrées
+data/*.json
 
 # Editor directories and files
 .vscode/*

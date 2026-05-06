@@ -1,24 +1,23 @@
+/**
+ * src/store/ventesStore.ts
+ *
+ * ÉTAPE 10 — Utilise les types communs depuis src/types/models.ts.
+ * Les interfaces locales sont supprimées — source unique de vérité.
+ */
+
 import { create } from 'zustand'
 import api from '../services/api'
+import type {
+  TableDocument,
+  ProduitDocument,
+  CommandeDocument,
+  LigneCommandeDocument,
+} from '../types/models'
 
-export interface Table {
-  id: string
-  numero: number
-  zone: 'salle' | 'terrasse' | 'bar'
-  capacite: number
-  statut: 'libre' | 'occupee' | 'reservee' | 'nettoyage'
-}
-
-export interface Produit {
-  id: string
-  code: string
-  nom: string
-  prix: number
-  categorie: string
-  stock: number
-  stockMin: number
-  unite: string
-}
+// ─── Réexports pour les composants existants ──────────────────────────────────
+export type Table   = TableDocument
+export type Produit = ProduitDocument
+export type Commande = CommandeDocument
 
 export interface LignePanier {
   produitId: string
@@ -28,29 +27,7 @@ export interface LignePanier {
   notes: string
 }
 
-export interface Commande {
-  id: string
-  numero: string
-  serveurId: string
-  serveurNom: string
-  tableId: string
-  tableNumero: number
-  statut: string
-  lignes: {
-    id: string
-    produitId: string
-    produitNom: string
-    quantite: number
-    prix: number
-    statut: string
-    notes: string
-    heureCommande: string
-    heurePret: string | null
-  }[]
-  total: number
-  notes: string
-  createdAt: string
-}
+// ─── Store ────────────────────────────────────────────────────────────────────
 
 interface VentesStore {
   tables: Table[]
@@ -73,35 +50,48 @@ interface VentesStore {
   viderPanier: () => void
   validerCommande: (serveurId: string, serveurNom: string) => Promise<Commande>
   annulerCommande: (commandeId: string) => Promise<void>
-  updateStatutLigne: (commandeId: string, ligneId: string, statut: string) => Promise<void>
+  updateStatutLigne: (commandeId: string, ligneId: string, statut: LigneCommandeDocument['statut']) => Promise<void>
   payerCommande: (commandeId: string, modePaiement: string) => Promise<void>
 }
 
 export const useVentesStore = create<VentesStore>((set, get) => ({
-  tables: [],
-  produits: [],
-  commandes: [],
+  tables:            [],
+  produits:          [],
+  commandes:         [],
   tableSelectionnee: null,
-  panier: [],
-  noteCommande: '',
-  loading: false,
+  panier:            [],
+  noteCommande:      '',
+  loading:           false,
 
   fetchTables: async () => {
-    const { data } = await api.get('/tables')
-    set({ tables: data })
+    try {
+      const { data } = await api.get('/tables')
+      set({ tables: data })
+    } catch {
+      // Mode hors ligne — garder les données en cache
+    }
   },
 
   fetchProduits: async () => {
-    const { data } = await api.get('/produits')
-    set({ produits: data })
+    try {
+      const { data } = await api.get('/produits')
+      set({ produits: data })
+    } catch {
+      // Mode hors ligne — garder les données en cache
+    }
   },
 
   fetchCommandes: async () => {
-    const { data } = await api.get('/commandes')
-    set({ commandes: data })
+    try {
+      const { data } = await api.get('/commandes')
+      set({ commandes: data })
+    } catch {
+      // Mode hors ligne — garder les données en cache
+    }
   },
 
-  selectionnerTable: (table) => set({ tableSelectionnee: table, panier: [], noteCommande: '' }),
+  selectionnerTable: (table) =>
+    set({ tableSelectionnee: table, panier: [], noteCommande: '' }),
 
   selectionnerTableOccupee: (table, commande) => {
     const panier: LignePanier[] = commande.lignes.map((l) => ({
@@ -118,17 +108,31 @@ export const useVentesStore = create<VentesStore>((set, get) => ({
     const panier = get().panier
     const existant = panier.find((l) => l.produitId === produit.id)
     if (existant) {
-      set({ panier: panier.map((l) => l.produitId === produit.id ? { ...l, quantite: l.quantite + 1 } : l) })
+      set({
+        panier: panier.map((l) =>
+          l.produitId === produit.id ? { ...l, quantite: l.quantite + 1 } : l
+        ),
+      })
     } else {
-      set({ panier: [...panier, { produitId: produit.id, produitNom: produit.nom, quantite: 1, prix: produit.prix, notes: '' }] })
+      set({
+        panier: [
+          ...panier,
+          { produitId: produit.id, produitNom: produit.nom, quantite: 1, prix: produit.prix, notes: '' },
+        ],
+      })
     }
   },
 
-  retirerDuPanier: (produitId) => set({ panier: get().panier.filter((l) => l.produitId !== produitId) }),
+  retirerDuPanier: (produitId) =>
+    set({ panier: get().panier.filter((l) => l.produitId !== produitId) }),
 
   modifierQuantite: (produitId, quantite) => {
     if (quantite <= 0) { get().retirerDuPanier(produitId); return }
-    set({ panier: get().panier.map((l) => l.produitId === produitId ? { ...l, quantite } : l) })
+    set({
+      panier: get().panier.map((l) =>
+        l.produitId === produitId ? { ...l, quantite } : l
+      ),
+    })
   },
 
   setNoteCommande: (note) => set({ noteCommande: note }),
@@ -139,16 +143,17 @@ export const useVentesStore = create<VentesStore>((set, get) => ({
     const { data } = await api.post('/commandes', {
       serveurId,
       serveurNom,
-      tableId: tableSelectionnee!.id,
+      tableId:     tableSelectionnee!.id,
       tableNumero: tableSelectionnee!.numero,
-      lignes: panier,
-      notes: noteCommande,
-      type: 'sur_place',
+      lignes:      panier,
+      notes:       noteCommande,
+      type:        'sur_place',
     })
     set({ panier: [], noteCommande: '', tableSelectionnee: null })
+    // Rafraîchir en arrière-plan (non bloquant)
     get().fetchTables()
     get().fetchCommandes()
-    return data
+    return data as Commande
   },
 
   annulerCommande: async (commandeId) => {

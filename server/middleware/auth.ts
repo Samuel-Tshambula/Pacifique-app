@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+import { getJwtSecret } from '../../config/env.js'
 
 export interface AuthRequest extends Request {
   user?: { id: string; role: string }
@@ -10,7 +11,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   if (!token) return res.status(401).json({ message: 'Token manquant' })
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { id: string; role: string }
+    const decoded = jwt.verify(token, getJwtSecret()) as { id: string; role: string }
     req.user = decoded
     next()
   } catch {

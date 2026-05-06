@@ -7,10 +7,12 @@
     "dev": "vite",
     "server": "tsx watch server/index.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "build:server": "tsc -p tsconfig.server.json",
     "electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron electron/main.cjs",
-    "start": "concurrently \"npm run dev\" \"npm run server\" \"npm run electron\"",
+    "start": "concurrently \"npm run dev\" \"npm run electron\"",
+    "start:full": "concurrently \"npm run dev\" \"npm run server\" \"npm run electron\"",
     "build": "tsc -b && vite build",
-    "dist": "npm run build && electron-builder",
+    "dist": "npm run build && npm run build:server && electron-builder",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -26,15 +28,25 @@
     },
     "files": [
       "dist/**/*",
+      "dist-server/**/*",
       "electron/main.cjs",
       "electron/preload.cjs",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "config.json",
+        "to": "config.json"
+      }
     ],
     "extraMetadata": {
       "main": "electron/main.cjs"
     },
     "win": {
-      "target": ["nsis", "zip"],
+      "target": [
+        "nsis",
+        "zip"
+      ],
       "forceCodeSigning": false
     }
   },
@@ -55,6 +67,8 @@
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.14.2",
     "recharts": "^3.8.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "use-sound": "^5.0.0",
     "uuid": "^14.0.0",
     "zustand": "^5.0.12"

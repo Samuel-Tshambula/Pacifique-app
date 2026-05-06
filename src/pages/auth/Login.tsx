@@ -2,6 +2,11 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
+import { 
+  Building2, Utensils, ChefHat, BarChart3, Calculator, Crown, Users,
+  Package, CheckCircle, Key, Lock, Ban, WifiOff, AlertTriangle,
+  User, Eye, EyeOff, Loader2
+} from 'lucide-react'
 import './Login.css'
 
 const ROLE_LABELS: Record<string, string> = {
@@ -9,9 +14,9 @@ const ROLE_LABELS: Record<string, string> = {
   receptionniste: 'Réceptionniste', gestionnaire: 'Gestionnaire', comptable: 'Comptable',
 }
 
-const ROLE_ICONS: Record<string, string> = {
-  admin: '👑', serveur: '🍽️', cuisinier: '👨‍🍳',
-  receptionniste: '🏨', gestionnaire: '📊', comptable: '💼',
+const ROLE_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  admin: Crown, serveur: Users, cuisinier: ChefHat,
+  receptionniste: Building2, gestionnaire: BarChart3, comptable: Calculator,
 }
 
 const REDIRECTS: Record<string, string> = {
@@ -35,12 +40,12 @@ function classifyError(msg: string): ErrorType {
   return 'generic'
 }
 
-const ERROR_CONFIG: Record<ErrorType, { icon: string; color: string; bg: string; border: string }> = {
-  credentials: { icon: '🔑', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
-  locked:      { icon: '🔒', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
-  disabled:    { icon: '🚫', color: '#7c3aed', bg: '#faf5ff', border: '#ddd6fe' },
-  network:     { icon: '📡', color: '#0369a1', bg: '#f0f9ff', border: '#bae6fd' },
-  generic:     { icon: '⚠️', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+const ERROR_CONFIG: Record<ErrorType, { icon: React.ComponentType<{ size?: number; color?: string }>; color: string; bg: string; border: string }> = {
+  credentials: { icon: Key, color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+  locked:      { icon: Lock, color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+  disabled:    { icon: Ban, color: '#7c3aed', bg: '#faf5ff', border: '#ddd6fe' },
+  network:     { icon: WifiOff, color: '#0369a1', bg: '#f0f9ff', border: '#bae6fd' },
+  generic:     { icon: AlertTriangle, color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
 }
 
 function validate(username: string, password: string): FieldErrors {
@@ -139,15 +144,15 @@ export default function Login() {
     <div className="login-container">
       <div className="login-left">
         <div className="login-brand">
-          <div className="brand-icon">🏨</div>
+          <div className="brand-icon"><Building2 size={48} /></div>
           <h1>Hôtel Pacifique</h1>
           <p>Système de gestion intégré</p>
         </div>
         <div className="login-features">
-          <div className="feature-item"><span>🍽️</span><span>Restaurant & Bar</span></div>
-          <div className="feature-item"><span>🛏️</span><span>Hébergement</span></div>
-          <div className="feature-item"><span>📦</span><span>Gestion du stock</span></div>
-          <div className="feature-item"><span>📊</span><span>Tableau de bord</span></div>
+          <div className="feature-item"><span><Utensils size={20} /></span><span>Restaurant & Bar</span></div>
+          <div className="feature-item"><span><Bed size={20} /></span><span>Hébergement</span></div>
+          <div className="feature-item"><span><Package size={20} /></span><span>Gestion du stock</span></div>
+          <div className="feature-item"><span><BarChart3 size={20} /></span><span>Tableau de bord</span></div>
         </div>
       </div>
 
@@ -155,7 +160,12 @@ export default function Login() {
         <div className={`login-card ${shake ? 'shake' : ''}`}>
           {connectedUser ? (
             <div className="login-success">
-              <div className="success-icon">{ROLE_ICONS[connectedUser.role] || '👤'}</div>
+              <div className="success-icon">
+                {(() => {
+                  const RoleIcon = ROLE_ICONS[connectedUser.role] || User
+                  return <RoleIcon size={48} />
+                })()}
+              </div>
               <h2>Bienvenue !</h2>
               <p className="success-name">{connectedUser.name}</p>
               <p className="success-role">{ROLE_LABELS[connectedUser.role]}</p>
@@ -177,7 +187,12 @@ export default function Login() {
                     className="login-error-box"
                     style={{ background: errCfg.bg, borderColor: errCfg.border, color: errCfg.color }}
                   >
-                    <span className="error-icon">{errCfg.icon}</span>
+                    <span className="error-icon">
+                      {(() => {
+                        const ErrorIcon = errCfg.icon
+                        return <ErrorIcon size={20} />
+                      })()}
+                    </span>
                     <div className="error-content">
                       <span className="error-msg">{serverError}</span>
                       {errorType === 'credentials' && attempts >= 2 && (
@@ -203,7 +218,7 @@ export default function Login() {
                 <div className="form-group">
                   <label htmlFor="username">Nom d'utilisateur</label>
                   <div className={`input-wrapper ${touched.username && fieldErrors.username ? 'input-error' : touched.username && !fieldErrors.username && username ? 'input-valid' : ''}`}>
-                    <span className="input-icon">👤</span>
+                    <span className="input-icon"><User size={18} /></span>
                     <input
                       id="username"
                       type="text"
@@ -215,11 +230,11 @@ export default function Login() {
                       autoFocus
                     />
                     {touched.username && !fieldErrors.username && username && (
-                      <span className="input-check">✓</span>
+                      <span className="input-check"><CheckCircle size={16} color="#22c55e" /></span>
                     )}
                   </div>
                   {touched.username && fieldErrors.username && (
-                    <span className="field-error">⚠ {fieldErrors.username}</span>
+                    <span className="field-error"><AlertTriangle size={14} /> {fieldErrors.username}</span>
                   )}
                 </div>
 
@@ -227,7 +242,7 @@ export default function Login() {
                 <div className="form-group">
                   <label htmlFor="password">Mot de passe</label>
                   <div className={`input-wrapper ${touched.password && fieldErrors.password ? 'input-error' : touched.password && !fieldErrors.password && password ? 'input-valid' : ''}`}>
-                    <span className="input-icon">🔒</span>
+                    <span className="input-icon"><Lock size={18} /></span>
                     <input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
@@ -237,17 +252,17 @@ export default function Login() {
                       placeholder="••••••••"
                       autoComplete="new-password"
                     />
+                    <button 
+                      type="button" 
+                      className="password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={showPassword}
-                      onChange={() => setShowPassword(!showPassword)}
-                    />
-                    <span>Afficher le mot de passe</span>
-                  </label>
                   {touched.password && fieldErrors.password && (
-                    <span className="field-error">⚠ {fieldErrors.password}</span>
+                    <span className="field-error"><AlertTriangle size={14} /> {fieldErrors.password}</span>
                   )}
                 </div>
 
@@ -258,7 +273,7 @@ export default function Login() {
                 >
                   {loading ? (
                     <span className="btn-loading">
-                      <span className="spinner" />
+                      <Loader2 size={18} className="spinner" />
                       Vérification...
                     </span>
                   ) : 'Se connecter'}

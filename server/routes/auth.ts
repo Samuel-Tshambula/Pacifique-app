@@ -2,10 +2,10 @@ import { Router, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { getUsers, saveUsers } from '../models/userStore.js'
+import { getJwtSecret } from '../../config/env.js'
 
 const router = Router()
 const MAX_ATTEMPTS = 3
-const JWT_SECRET = process.env.JWT_SECRET || 'pacifique_secret_dev'
 const JWT_EXPIRES = '24h'
 
 router.post('/login', async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ router.post('/login', async (req: Request, res: Response) => {
   user.lastLogin = new Date().toISOString()
   saveUsers(users)
 
-  const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+  const token = jwt.sign({ id: user.id, role: user.role }, getJwtSecret(), { expiresIn: JWT_EXPIRES })
 
   res.json({
     token,

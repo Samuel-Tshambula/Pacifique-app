@@ -1,40 +1,56 @@
-import { useState } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { useAuthStore } from '../store/authStore'
-import Sidebar from '../components/ui/Sidebar'
-import { useNotificationsPlats } from '../hooks/useNotificationsPlats'
-import './MainLayout.css'
+/**
+ * src/layouts/MainLayout.tsx
+ *
+ * ÉTAPE 6 — Guard de route via ProtectedRoute.
+ * ÉTAPE 7 — useSocket() : connexion temps réel globale.
+ * ÉTAPE 8 — useOnlineStatus() : détection hors ligne + flush queue.
+ * ÉTAPE 9 — useSyncStatus() : statut sync cloud.
+ */
 
-const ROLE_ROUTES: Record<string, string[]> = {
-  admin:          ['/dashboard', '/ventes', '/cuisine', '/hebergement', '/stock', '/rapports', '/utilisateurs', '/ticket'],
-  gestionnaire:   ['/dashboard', '/ventes', '/stock', '/rapports', '/ticket'],
-  comptable:      ['/dashboard', '/rapports', '/ticket'],
-  serveur:        ['/ventes', '/ventes/commande', '/ticket'],
-  cuisinier:      ['/cuisine'],
-  receptionniste: ['/hebergement', '/ventes', '/ticket'],
-}
+import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
+import Sidebar from '../components/ui/Sidebar'
+import ProtectedRoute from '../components/auth/ProtectedRoute'
+import { useNotificationsPlats } from '../hooks/useNotificationsPlats'
+import { useSocket } from '../hooks/useSocket'
+import { useOnlineStatus } from '../hooks/useOnlineStatus'
+import { useSyncStatus } from '../hooks/useSyncStatus'
+import './MainLayout.css'
 
 const NO_PADDING_ROUTES = ['/ventes/commande']
 
 export default function MainLayout() {
-  const { isAuthenticated, user } = useAuthStore()
-  const location = useLocation()
   const [badgeVentes, setBadgeVentes] = useState(0)
 
+  // ÉTAPE 7 — Connexion Socket.IO globale
+  const { status: socketStatus } = useSocket()
+
+  // ÉTAPE 8 — Statut réseau + queue hors ligne
+  const onlineStatus = useOnlineStatus()
+
+  // ÉTAPE 9 — Statut sync cloud
+  const syncStatus = useSyncStatus()
+
+  // Notifications plats prêts
   useNotificationsPlats(setBadgeVentes)
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
-
-  const allowed = ROLE_ROUTES[user?.role || ''] || []
-  const hasAccess = allowed.some((route) => location.pathname.startsWith(route))
-  if (!hasAccess) return <Navigate to={allowed[0]} replace />
+  const noPadding = NO_PADDING_ROUTES.some((r) =>
+    window.location.hash.replace('#', '').startsWith(r)
+  )
 
   return (
-    <div className="layout">
-      <Sidebar badgeVentes={badgeVentes} />
-      <main className={`layout-content ${NO_PADDING_ROUTES.includes(location.pathname) ? 'no-padding' : ''}`}>
-        <Outlet />
-      </main>
-    </div>
+    <ProtectedRoute>
+      <div className="layout">
+        <Sidebar
+          badgeVentes={badgeVentes}
+          socketStatus={socketStatus}
+          onlineStatus={onlineStatus}
+          syncStatus={syncStatus}
+        />
+        <main className={`layout-content ${noPadding ? 'no-padding' : ''}`}>
+          <Outlet />
+        </main>
+      </div>
+    </ProtectedRoute>
   )
 }

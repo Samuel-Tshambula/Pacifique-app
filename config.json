@@ -1,0 +1,5 @@
+{
+  "role": "server",
+  "screen": "reception",
+  "serverUrl": "http://localhost:3001"
+}
