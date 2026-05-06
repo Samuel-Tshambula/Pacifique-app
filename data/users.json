@@ -8,7 +8,7 @@
     "isActive": true,
     "failedAttempts": 0,
     "lockedUntil": null,
-    "lastLogin": "2026-05-02T03:46:19.042Z",
+    "lastLogin": "2026-05-06T10:09:44.993Z",
     "createdAt": "2026-04-26T20:18:59.367Z"
   },
   {
@@ -17,7 +17,7 @@
     "username": "Marceline.Gilbert",
     "password": "$2b$12$4HVrigm60hxvxpQN.a2B2u49t8RqQHkL7aMSXXiO31H1wzhpYj6Uu",
     "role": "serveur",
-    "isActive": true,
+    "isActive": false,
     "failedAttempts": 0,
     "lockedUntil": null,
     "lastLogin": "2026-05-02T03:26:23.382Z",

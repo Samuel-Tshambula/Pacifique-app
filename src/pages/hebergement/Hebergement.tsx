@@ -33,8 +33,19 @@ const STATUT_CONFIG = {
 
 const TYPE_LABELS = { simple: 'Simple', double: 'Double', suite: 'Suite' }
 const TYPES = ['simple', 'double', 'suite'] as const
+
+type ChambreType = typeof TYPES[number]
+
+type ChambreForm = {
+  numero: string
+  etage: string
+  type: ChambreType
+  prix: string
+  capacite: string
+}
+
 const STATUTS_RAPIDES = ['libre', 'reservee', 'nettoyage'] as const
-const EMPTY_CHAMBRE = { numero: '', etage: '1', type: 'simple' as const, prix: '', capacite: '1' }
+const EMPTY_CHAMBRE: ChambreForm = { numero: '', etage: '1', type: 'simple', prix: '', capacite: '1' }
 
 export default function Hebergement() {
   const { user } = useAuthStore()
@@ -58,7 +69,7 @@ export default function Hebergement() {
 
   const [formCheckin, setFormCheckin] = useState({ clientNom: '', clientPrenom: '', clientPiece: '', nombrePersonnes: '1', nuits: '1' })
   const [formConso, setFormConso] = useState({ description: '', montant: '', type: 'restaurant' })
-  const [formChambre, setFormChambre] = useState(EMPTY_CHAMBRE)
+  const [formChambre, setFormChambre] = useState<ChambreForm>(EMPTY_CHAMBRE)
   const [modePaiement, setModePaiement] = useState('especes')
 
   async function fetchData() {

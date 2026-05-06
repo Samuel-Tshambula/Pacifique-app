@@ -10,3 +10,7 @@
   background: var(--bg-page);
   padding: 28px;
 }
+
+.layout-content.no-padding {
+  padding: 0;
+}

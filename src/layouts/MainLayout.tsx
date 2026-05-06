@@ -29,12 +29,10 @@ export default function MainLayout() {
   const hasAccess = allowed.some((route) => location.pathname.startsWith(route))
   if (!hasAccess) return <Navigate to={allowed[0]} replace />
 
-  const noPadding = NO_PADDING_ROUTES.includes(location.pathname)
-
   return (
     <div className="layout">
-      <Sidebar />
-      <main className="layout-content">
+      <Sidebar badgeVentes={badgeVentes} />
+      <main className={`layout-content ${NO_PADDING_ROUTES.includes(location.pathname) ? 'no-padding' : ''}`}>
         <Outlet />
       </main>
     </div>

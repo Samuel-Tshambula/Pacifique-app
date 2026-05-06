@@ -10,8 +10,33 @@
     "electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron electron/main.cjs",
     "start": "concurrently \"npm run dev\" \"npm run server\" \"npm run electron\"",
     "build": "tsc -b && vite build",
+    "dist": "npm run build && electron-builder",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "description": "Application de gestion hôtelière et restauration Pacifique",
+  "author": "Pacifique",
+  "build": {
+    "appId": "com.pacifique.app",
+    "productName": "Hôtel Pacifique",
+    "defaultArch": "x64",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/main.cjs",
+      "electron/preload.cjs",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "electron/main.cjs"
+    },
+    "win": {
+      "target": ["nsis", "zip"],
+      "forceCodeSigning": false
+    }
   },
   "main": "electron/main.cjs",
   "dependencies": {

@@ -4,7 +4,7 @@ import api from '../../services/api'
 import toast from 'react-hot-toast'
 import useSound from 'use-sound'
 import { motion } from 'framer-motion'
-import { Printer, ArrowLeft, Receipt, Calendar, Clock, Hash, User, CreditCard, CheckCircle2 } from 'lucide-react'
+import { Printer, ArrowLeft, Receipt, Calendar, Clock, Hash, User, CreditCard } from 'lucide-react'
 import './Ticket.css'
 
 interface LigneFacture {
@@ -56,9 +56,11 @@ export default function Ticket() {
 
   async function handlePrintThermal() {
     if (!electronPrintAvailable) return
+    const electronApi = window.api
+    if (!electronApi) return
     setPrinting(true)
     try {
-      await window.api.printTicket()
+      await electronApi.printTicket()
       playPrint()
       toast.success('Ticket envoyé à l’imprimante thermique')
     } catch (error) {
