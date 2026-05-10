@@ -35,7 +35,7 @@ function playNotificationSound() {
   }
 }
 
-function showOrderReadyToast(tableNumero: number) {
+function showOrderReadyToast(tableNumero: string | number) {
   playNotificationSound()
   toast(`Table ${tableNumero} — Commande prête à servir !`, {
     duration: 12000,
@@ -55,6 +55,7 @@ export function useNotificationsPlats(setBadgeCount: (n: number) => void) {
   const { user } = useAuthStore()
   const commandesPretes = useRef<Set<string>>(new Set())
   const socketListenerAttached = useRef(false)
+  const badgeCountRef = useRef(0)
 
   useEffect(() => {
     if (!user || !ROLES_ALERTES.includes(user.role)) return
@@ -66,9 +67,10 @@ export function useNotificationsPlats(setBadgeCount: (n: number) => void) {
       socket.on('order_ready', (payload: OrderReadyPayload) => {
         if (!commandesPretes.current.has(payload.commandeId)) {
           commandesPretes.current.add(payload.commandeId)
-          showOrderReadyToast(payload.tableNumero)
+          showOrderReadyToast(payload.table)
           // Incrémenter le badge (sera recalculé par le polling aussi)
-          setBadgeCount((prev: number) => prev + 1)
+          badgeCountRef.current += 1
+          setBadgeCount(badgeCountRef.current)
         }
       })
       socketListenerAttached.current = true
@@ -99,6 +101,7 @@ export function useNotificationsPlats(setBadgeCount: (n: number) => void) {
           if (!idsPretes.has(id)) commandesPretes.current.delete(id)
         })
 
+        badgeCountRef.current = pretes.length
         setBadgeCount(pretes.length)
       } catch {
         // Silencieux — le serveur peut être temporairement indisponible

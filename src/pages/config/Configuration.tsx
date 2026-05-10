@@ -11,9 +11,11 @@ import './Configuration.css'
 
 // ─── Types locaux ─────────────────────────────────────────────────────────────
 
+import type { AppRole, AppScreen } from '../../types'
+
 type FormState = {
-  role: 'server' | 'client'
-  screen: 'reception' | 'kitchen' | 'admin'
+  role: AppRole
+  screen: AppScreen
   serverUrl: string
 }
 
@@ -38,7 +40,7 @@ export default function Configuration() {
       setForm({
         role: config.role,
         screen: config.screen,
-        serverUrl: config.serverUrl,
+        serverUrl: config.serverUrl || 'http://localhost:3001',
       })
     }
   }, [config])

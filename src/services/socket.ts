@@ -120,3 +120,14 @@ export function disconnectSocket(): void {
 export function isSocketConnected(): boolean {
   return socket?.connected ?? false
 }
+
+// Types
+export interface OrderReadyPayload {
+  commandeId: string
+  table: string | number
+  plats: Array<{
+    nom: string
+    quantite: number
+  }>
+  timestamp: string
+}

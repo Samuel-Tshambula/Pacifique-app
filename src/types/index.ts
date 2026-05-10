@@ -41,7 +41,7 @@ export type User = {
   id: string
   name: string
   username: string
-  role: Role
+  role: import('./models').Role
 }
 
 export type AuthState = {
@@ -52,5 +52,29 @@ export type AuthState = {
   logout: () => void
 }
 
+// Types de configuration
+export type AppRole = 'server' | 'client'
+export type AppScreen = 'reception' | 'kitchen' | 'admin'
+
+export type AppConfig = {
+  role: AppRole
+  screen: AppScreen
+  serverUrl?: string
+  printerName?: string
+  soundEnabled?: boolean
+}
+
+export type ConfigValidationResult = {
+  valid: boolean
+  errors: string[]
+  config?: AppConfig
+}
+
+export type ConfigSaveResult = {
+  success: boolean
+  errors: string[]
+  config?: AppConfig
+}
+
 // Réexport pour compatibilité avec le code existant
-export type { Role as UserRole }
+export type { Role as UserRole } from './models'

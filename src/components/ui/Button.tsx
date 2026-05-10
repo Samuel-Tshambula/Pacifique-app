@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { sounds } from '../../services/sounds'
 import { Loader2 } from 'lucide-react'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-interface ButtonProps {
+export interface ButtonProps {
   children: ReactNode
   variant?: 'primary' | 'success' | 'danger' | 'warning' | 'outline'
   size?: 'sm' | 'md' | 'lg'

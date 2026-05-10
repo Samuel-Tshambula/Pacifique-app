@@ -12,7 +12,7 @@
     "start": "concurrently \"npm run dev\" \"npm run electron\"",
     "start:full": "concurrently \"npm run dev\" \"npm run server\" \"npm run electron\"",
     "build": "tsc -b && vite build",
-    "dist": "npm run build && npm run build:server && electron-builder",
+    "dist": "npm run build && electron-builder",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -47,7 +47,9 @@
         "nsis",
         "zip"
       ],
-      "forceCodeSigning": false
+      "forceCodeSigning": false,
+      "signingHashAlgorithms": null,
+      "sign": false
     }
   },
   "main": "electron/main.cjs",

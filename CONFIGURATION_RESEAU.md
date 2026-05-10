@@ -471,3 +471,4 @@ En cas de problème, fournir :
 ---
 
 **Note importante** : Ce guide est basé sur des scénarios typiques. Adaptez les adresses IP à votre configuration réseau réelle. Testez toujours la connectivité avant la mise en production.
+ 

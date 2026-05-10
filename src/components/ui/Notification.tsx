@@ -1,4 +1,5 @@
 import { toast, Toaster } from 'react-hot-toast'
+import type { Toast } from 'react-hot-toast'
 import { 
   CheckCircle, XCircle, AlertTriangle, 
   Info, Bell, Loader2 
@@ -49,10 +50,10 @@ export function showNotification(
     sounds[soundType]()
   }
 
-  const toastOptions = {
+  const toastOptions: Partial<Toast> = {
     duration,
     position: position as any,
-    icon,
+    icon: icon as any,
     style: {
       background: '#fff',
       color: '#374151',
@@ -70,9 +71,9 @@ export function showNotification(
     case 'error':
       return toast.error(message, toastOptions)
     case 'warning':
-      return toast(message, { ...toastOptions, icon })
+      return toast(message, { ...toastOptions, icon: icon as any })
     case 'info':
-      return toast(message, { ...toastOptions, icon })
+      return toast(message, { ...toastOptions, icon: icon as any })
     case 'loading':
       return toast.loading(message, toastOptions)
   }
@@ -164,7 +165,7 @@ export function NotificationProvider() {
 }
 
 // Notification de commande
-export function showOrderNotification(table: string, items: number) {
+export function showOrderNotification(table: string, _items: number) {
   return notify.success(`Commande table ${table} envoyée !`, {
     icon: <Bell className="w-5 h-5 text-green-500" />,
     sound: true,

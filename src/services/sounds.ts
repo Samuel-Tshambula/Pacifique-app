@@ -4,12 +4,12 @@
  * Sons discrets et professionnels, uniquement sur les actions importantes.
  */
 
-type SoundType =
-  | 'success'      // Commande validée, paiement, check-in
-  | 'notification' // Commande prête à servir
-  | 'error'        // Erreur critique
-  | 'click'        // Clic produit dans la commande
-  | 'checkout'     // Check-out hébergement
+// type SoundType =
+//   | 'success'      // Commande validée, paiement, check-in
+//   | 'notification' // Commande prête à servir
+//   | 'error'        // Erreur critique
+//   | 'click'        // Clic produit dans la commande
+//   | 'checkout'     // Check-out hébergement
 
 function getCtx(): AudioContext | null {
   try {

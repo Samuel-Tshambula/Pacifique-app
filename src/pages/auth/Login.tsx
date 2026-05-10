@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore'
 import { 
   Building2, Utensils, ChefHat, BarChart3, Calculator, Crown, Users,
   Package, CheckCircle, Key, Lock, Ban, WifiOff, AlertTriangle,
-  User, Eye, EyeOff, Loader2
+  User, Eye, EyeOff, Loader2, Bed
 } from 'lucide-react'
 import './Login.css'
 

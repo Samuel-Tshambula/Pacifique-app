@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  fadeIn, slideIn, scaleIn, staggerChildren,
+  fadeIn, slideIn, staggerChildren,
   kpiCardAnimation, useAnimatedAction,
   AnimatedCard, AnimatedButton
 } from '../hooks/useAnimations'
@@ -67,7 +67,7 @@ export default function DashboardEnhanced() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { withSound, withHoverAnimation } = useAnimatedAction()
+  const { withSound } = useAnimatedAction()
 
   const fetchData = () =>
     api.get('/dashboard')
@@ -207,7 +207,9 @@ export default function DashboardEnhanced() {
             className="refresh-btn"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            {...withHoverAnimation}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring' as const, stiffness: 400, damping: 25 }}
             style={{
               background: 'none',
               border: '1px solid var(--border)',

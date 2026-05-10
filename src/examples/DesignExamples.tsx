@@ -3,7 +3,7 @@ import {
   Button, PrimaryButton, SuccessButton, DangerButton, OutlineButton,
   Card, CardHeader, CardContent, CardFooter, StatCard,
   notify, showOrderNotification, showStockAlert,
-  ShoppingCart, Users, TrendingUp, Package, Bell, Settings
+  ShoppingCart, Users, Package, Bell, Settings
 } from '../components/ui'
 import { useAnimatedAction } from '../hooks/useAnimations'
 
@@ -162,7 +162,7 @@ export default function DesignExamples() {
             Stock
           </Button>
           
-          <Button variant="info" onClick={() => notify.info('Information importante')}>
+          <Button variant="primary" onClick={() => notify.info('Information importante')}>
             Info
           </Button>
           

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-interface CardProps {
+export interface CardProps {
   children: ReactNode
   className?: string
   hoverable?: boolean
@@ -72,7 +72,7 @@ export default function Card({
 }
 
 // Composants de carte spécialisés
-interface CardHeaderProps {
+export interface CardHeaderProps {
   title: string
   subtitle?: string
   icon?: ReactNode
@@ -94,7 +94,7 @@ export function CardHeader({ title, subtitle, icon, action }: CardHeaderProps) {
   )
 }
 
-interface CardContentProps {
+export interface CardContentProps {
   children: ReactNode
   className?: string
 }
@@ -103,7 +103,7 @@ export function CardContent({ children, className = '' }: CardContentProps) {
   return <div className={`${className}`}>{children}</div>
 }
 
-interface CardFooterProps {
+export interface CardFooterProps {
   children: ReactNode
   className?: string
 }
@@ -113,7 +113,7 @@ export function CardFooter({ children, className = '' }: CardFooterProps) {
 }
 
 // Carte de statistique
-interface StatCardProps {
+export interface StatCardProps {
   title: string
   value: string | number
   icon: ReactNode
@@ -133,7 +133,7 @@ export function StatCard({ title, value, icon, trend, color = 'primary' }: StatC
     info: 'bg-indigo-50 text-indigo-600'
   }
 
-  const trendColor = trend?.value >= 0 ? 'text-green-600' : 'text-red-600'
+  const trendColor = trend && trend.value >= 0 ? 'text-green-600' : 'text-red-600'
 
   return (
     <Card hoverable padding="lg">

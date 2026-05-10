@@ -9,6 +9,7 @@
  */
 
 import { create } from 'zustand'
+import type { AppConfig, ConfigValidationResult, ConfigSaveResult } from '../types'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,7 +47,7 @@ function getDefaultConfig(): AppConfig {
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
-export const useConfigStore = create<ConfigState>((set, get) => ({
+export const useConfigStore = create<ConfigState>((set) => ({
   config: null,
   isLoaded: false,
   isSaving: false,
@@ -95,7 +96,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     if (!newConfig.serverUrl) {
       errors.push('"serverUrl" manquant')
     }
-    return { valid: errors.length === 0, errors }
+    return { valid: errors.length === 0, errors, config: newConfig as AppConfig }
   },
 
   saveConfig: async (newConfig) => {
