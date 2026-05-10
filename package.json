@@ -43,13 +43,8 @@
       "main": "electron/main.cjs"
     },
     "win": {
-      "target": [
-        "nsis",
-        "zip"
-      ],
-      "forceCodeSigning": false,
-      "signingHashAlgorithms": null,
-      "sign": false
+      "target": "zip",
+      "forceCodeSigning": false
     }
   },
   "main": "electron/main.cjs",
